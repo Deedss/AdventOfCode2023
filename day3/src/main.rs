@@ -12,6 +12,11 @@ struct Item {
     value: String,
 }
 
+struct Gear {
+    first: Item,
+    last: Item
+}
+
 impl Item {
     fn new(index: usize, value: String) -> Self {
         let last_index = index - 1;
@@ -63,7 +68,7 @@ fn parse_row(input: &str) -> Vec<Item> {
     items
 }
 
-fn has_matching_neighbour(curr: &Vec<Item>, value: &Item, j: usize) -> bool {
+fn has_matching_symbol_neighbour(curr: &Vec<Item>, value: &Item, j: usize) -> bool {
     let mut has_neighbour = false;
     let prev_val = curr.get(j.wrapping_sub(1));
     let next_val = curr.get(j.wrapping_add(1));
@@ -76,42 +81,41 @@ fn has_matching_neighbour(curr: &Vec<Item>, value: &Item, j: usize) -> bool {
     has_neighbour
 }
 
-fn has_match_in_line(line: Option<&Vec<Item>>, value: &Item) -> bool {
+
+fn has_matching_number_neighbour(curr: &Vec<Item>, value: &Item, j: usize) -> Option<Gear> {
+    let prev_val = curr.get(j.wrapping_sub(1));
+    let next_val = curr.get(j.wrapping_add(1));
+    
+    let result: Gear;
+}
+
+fn has_matching_symbol_in_line(line: Option<&Vec<Item>>, value: &Item) -> bool {
     line.and_then(|l| {
         l.iter()
             .find(|&v| {
-                if (value.first_index == 0) {
-                    v.last_index <= (value.last_index + 1)
-                } else {
-                    v.first_index >= (value.first_index - 1)
-                        && v.last_index <= (value.last_index + 1)
+                if value.first_index == 0 {
+                    return v.last_index <= (value.last_index + 1);
                 }
+                v.first_index >= (value.first_index - 1) && v.last_index <= (value.last_index + 1)
             })
             .filter(|v| v.is_symbol())
     })
     .is_some()
 }
 
-fn check_numbers(lines: &[Vec<Item>]) -> u32 {
+fn part_1(input: &str) -> u32 {
+    let rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
     let mut total_sum = 0;
 
-    for (i, row) in lines.iter().enumerate() {
+    for (i, row) in rows.iter().enumerate() {
         for (j, value) in row.iter().enumerate() {
             if value.is_number() {
                 let mut has_edging_symbol = false;
-                has_edging_symbol = has_edging_symbol || has_matching_neighbour(row, value, j);
-                if i == 0 {
-                    has_edging_symbol =
-                        has_edging_symbol || has_match_in_line(lines.get(i + 1), value);
-                } else if i == lines.len() {
-                    has_edging_symbol =
-                        has_edging_symbol || has_match_in_line(lines.get(i - 1), value);
-                } else {
-                    has_edging_symbol =
-                        has_edging_symbol || has_match_in_line(lines.get(i - 1), value);
-                    has_edging_symbol =
-                        has_edging_symbol || has_match_in_line(lines.get(i + 1), value);
-                }
+                has_edging_symbol = has_edging_symbol || has_matching_symbol_neighbour(row, value, j);
+                has_edging_symbol =
+                    has_edging_symbol || has_matching_symbol_in_line(rows.get(i.wrapping_sub(1)), value);
+                has_edging_symbol =
+                    has_edging_symbol || has_matching_symbol_in_line(rows.get(i.wrapping_add(1)), value);
 
                 if has_edging_symbol {
                     if let Ok(num) = value.value.parse::<u32>() {
@@ -127,16 +131,25 @@ fn check_numbers(lines: &[Vec<Item>]) -> u32 {
     total_sum
 }
 
-fn part_1(input: &str) -> u32 {
-    let rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
-
-    check_numbers(&rows)
-}
-
 fn part_2(input: &str) -> u32 {
-    let sum = 0;
+    let rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
+    let mut multiplies: Vec<(u32, u32)> = Vec::new();
+    let mut total_sum: u32 = 0;
 
-    sum
+    // First find all * with matching items, and store those in the multiplier vec
+    for (i, row) in rows.iter().enumerate() {
+        for (j, value) in row.iter().enumerate() {
+            if value.value == '*' {
+
+                let val1 = rows.get(i.wrapping_sub(1))
+            }
+        }
+
+    }
+
+    // Then go over the normal numbers but skip the multiplier items.
+
+    total_sum
 }
 
 fn main() {
