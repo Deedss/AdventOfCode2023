@@ -1,20 +1,21 @@
-use std::collections::btree_map::IterMut;
+use std::{
+    collections::{
+        btree_map::{IterMut, Values},
+        HashSet,
+    },
+    env::var,
+};
 
 #[allow(dead_code)]
 // Idea
 // Split a line on . and store values in a struct with index and value
 // Get all values from a line and their indices
 // Get all indices of symbols and check
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 struct Item {
     first_index: usize,
     last_index: usize,
     value: String,
-}
-
-struct Gear {
-    first: Item,
-    last: Item
 }
 
 impl Item {
@@ -81,12 +82,33 @@ fn has_matching_symbol_neighbour(curr: &Vec<Item>, value: &Item, j: usize) -> bo
     has_neighbour
 }
 
+fn find_adjacent_items(
+    curr: Option<&Vec<Item>>,
+    prev_row: Option<&Vec<Item>>,
+    next_row: Option<&Vec<Item>>,
+    target: &Item,
+) -> Vec<Item> {
+    let mut result: Vec<Item> = Vec::new();
 
-fn has_matching_number_neighbour(curr: &Vec<Item>, value: &Item, j: usize) -> Option<Gear> {
-    let prev_val = curr.get(j.wrapping_sub(1));
-    let next_val = curr.get(j.wrapping_add(1));
-    
-    let result: Gear;
+    // Helper closure to process a single row
+    let mut process_row = |row: Option<&Vec<Item>>| {
+        if let Some(row_items) = row {
+            for item in row_items {
+                if item.is_number()
+                    && (item.last_index + 1 >= target.first_index
+                        && item.first_index <= target.last_index + 1)
+                {
+                    result.push(item.clone());
+                }
+            }
+        }
+    };
+
+    process_row(curr);
+    process_row(prev_row);
+    process_row(next_row);
+
+    result
 }
 
 fn has_matching_symbol_in_line(line: Option<&Vec<Item>>, value: &Item) -> bool {
@@ -103,19 +125,33 @@ fn has_matching_symbol_in_line(line: Option<&Vec<Item>>, value: &Item) -> bool {
     .is_some()
 }
 
+fn get_sum_of_gears(gears: Vec<Item>) -> u32 {
+    let mut sum = 0;
+    for chunk in gears.chunks(2) {
+        if chunk.len() == 2 {
+            if let (Ok(val1), Ok(val2)) =
+                (chunk[0].value.parse::<u32>(), chunk[1].value.parse::<u32>())
+            {
+                sum += val1 * val2;
+            }
+        }
+    }
+    sum
+}
+
 fn part_1(input: &str) -> u32 {
     let rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
     let mut total_sum = 0;
-
     for (i, row) in rows.iter().enumerate() {
         for (j, value) in row.iter().enumerate() {
             if value.is_number() {
                 let mut has_edging_symbol = false;
-                has_edging_symbol = has_edging_symbol || has_matching_symbol_neighbour(row, value, j);
                 has_edging_symbol =
-                    has_edging_symbol || has_matching_symbol_in_line(rows.get(i.wrapping_sub(1)), value);
-                has_edging_symbol =
-                    has_edging_symbol || has_matching_symbol_in_line(rows.get(i.wrapping_add(1)), value);
+                    has_edging_symbol || has_matching_symbol_neighbour(row, value, j);
+                has_edging_symbol = has_edging_symbol
+                    || has_matching_symbol_in_line(rows.get(i.wrapping_sub(1)), value);
+                has_edging_symbol = has_edging_symbol
+                    || has_matching_symbol_in_line(rows.get(i.wrapping_add(1)), value);
 
                 if has_edging_symbol {
                     if let Ok(num) = value.value.parse::<u32>() {
@@ -125,27 +161,31 @@ fn part_1(input: &str) -> u32 {
             }
         }
     }
-
-    println!("{}", total_sum);
-
     total_sum
 }
 
 fn part_2(input: &str) -> u32 {
-    let rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
-    let mut multiplies: Vec<(u32, u32)> = Vec::new();
+    let mut rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
     let mut total_sum: u32 = 0;
 
-    // First find all * with matching items, and store those in the multiplier vec
-    for (i, row) in rows.iter().enumerate() {
-        for (j, value) in row.iter().enumerate() {
-            if value.value == '*' {
+    let mut gears: Vec<Item> = Vec::new();
 
-                let val1 = rows.get(i.wrapping_sub(1))
+    for (i, row) in rows.iter().enumerate() {
+        for (j, item) in row.iter().enumerate() {
+            if item.is_symbol() && item.value == "*" {
+                let mut prev = rows.get(i.wrapping_sub(1));
+                let mut next = rows.get(i.wrapping_add(1));
+
+                let mut result = find_adjacent_items(Some(row), prev, next, item);
+
+                if result.len() == 2 {
+                    gears.append(&mut result);
+                }
             }
         }
-
     }
+
+    total_sum = get_sum_of_gears(gears.clone());
 
     // Then go over the normal numbers but skip the multiplier items.
 
@@ -155,13 +195,13 @@ fn part_2(input: &str) -> u32 {
 fn main() {
     let example1 = part_1(include_str!("sample.txt"));
     println!("{}", example1);
-
+    //
     let part1 = part_1(include_str!("input.txt"));
     println!("{}", part1);
     //
-    // let example2 = part_2(include_str!("sample.txt"));
-    // println!("{}", example2);
+    let example2 = part_2(include_str!("sample.txt"));
+    println!("{}", example2);
     //
-    // let part2 = part_2(include_str!("input.txt"));
-    // println!("{}", part2);
+    let part2 = part_2(include_str!("input.txt"));
+    println!("{}", part2);
 }
