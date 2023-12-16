@@ -1,12 +1,4 @@
-use std::{
-    collections::{
-        btree_map::{IterMut, Values},
-        HashSet,
-    },
-    env::var,
-};
-
-#[allow(dead_code)]
+#[allow(dead_code, unused_variables)]
 // Idea
 // Split a line on . and store values in a struct with index and value
 // Get all values from a line and their indices
@@ -165,16 +157,14 @@ fn part_1(input: &str) -> u32 {
 }
 
 fn part_2(input: &str) -> u32 {
-    let mut rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
-    let mut total_sum: u32 = 0;
-
+    let rows: Vec<Vec<Item>> = input.lines().map(|row| parse_row(row)).collect();
     let mut gears: Vec<Item> = Vec::new();
 
     for (i, row) in rows.iter().enumerate() {
-        for (j, item) in row.iter().enumerate() {
+        for item in row.iter() {
             if item.is_symbol() && item.value == "*" {
-                let mut prev = rows.get(i.wrapping_sub(1));
-                let mut next = rows.get(i.wrapping_add(1));
+                let prev = rows.get(i.wrapping_sub(1));
+                let next = rows.get(i.wrapping_add(1));
 
                 let mut result = find_adjacent_items(Some(row), prev, next, item);
 
@@ -185,7 +175,7 @@ fn part_2(input: &str) -> u32 {
         }
     }
 
-    total_sum = get_sum_of_gears(gears.clone());
+    let total_sum = get_sum_of_gears(gears.clone());
 
     // Then go over the normal numbers but skip the multiplier items.
 

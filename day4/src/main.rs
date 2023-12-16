@@ -1,5 +1,4 @@
-use std::net;
-
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 struct Card {
     numbers: Vec<u32>,
@@ -75,10 +74,10 @@ fn part_2(input: &str) -> u32 {
     counts.iter().sum()
 }
 fn main() {
-    // let example_1 = part_1(include_str!("example.txt"));
-    // println!("Example part 1 : {}", example_1);
-    // let part_1 = part_1(include_str!("input.txt"));
-    // println!("Input part 1 : {}", part_1);
+    let example_1 = part_1(include_str!("example.txt"));
+    println!("Example part 1 : {}", example_1);
+    let part_1 = part_1(include_str!("input.txt"));
+    println!("Input part 1 : {}", part_1);
 
     let example_2 = part_2(include_str!("example.txt"));
     println!("Example part 2 : {}", example_2);
