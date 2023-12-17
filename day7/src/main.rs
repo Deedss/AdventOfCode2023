@@ -28,7 +28,7 @@ struct Hand {
     cards: Vec<u8>,
     bid: i64,
     type_of_hands: TypeOfHands,
-    value_type_of_cards: i64,
+    pairs: Vec<u8>,
 }
 
 impl Hand {
@@ -38,63 +38,49 @@ impl Hand {
             .map(|c| get_card_value(c))
             .collect::<Vec<u8>>();
         cards_by_values.sort_by(|a, b| b.cmp(a));
-        let (value_type_of_cards, type_of_hands) = get_type_of_hands(&cards_by_values);
+        let (pairs, type_of_hands) = get_type_of_hands(&cards_by_values);
         Hand {
             cards: cards_by_values,
             bid,
             type_of_hands,
-            value_type_of_cards,
+            pairs,
         }
     }
 }
 
-fn get_indices(arr: &[i32; 15], count: u8) -> Vec<usize> {
+fn get_indices(arr: &[i32; 15], count: u8) -> Vec<u8> {
     let mut indices = Vec::new();
     for (i, &val) in arr.iter().enumerate() {
         if val == count as i32 {
-            indices.push(i);
+            indices.push(i as u8);
         }
     }
+    indices.sort_by(|a, &b| b.cmp(a));
     indices
 }
 
-fn get_type_of_hands(cards_by_values: &Vec<u8>) -> (i64, TypeOfHands) {
+fn get_type_of_hands(cards_by_values: &Vec<u8>) -> (Vec<u8>, TypeOfHands) {
     let mut counts = [0; 15];
-    let mut sum = 0;
     for c in cards_by_values.iter() {
         counts[*c as usize] += 1;
     }
 
     if counts.iter().any(|&count| count == 5) {
-        let indices = get_indices(&counts, 5);
-        sum = indices[0] as i64 * 5;
-        (sum, TypeOfHands::FiveOfAKind)
+        (get_indices(&counts, 5), TypeOfHands::FiveOfAKind)
     } else if counts.iter().any(|&count| count == 4) {
-        let indices = get_indices(&counts, 4);
-        sum = indices[0] as i64 * 4;
-        (sum, TypeOfHands::FourOfAKind)
+        (get_indices(&counts, 4), TypeOfHands::FourOfAKind)
     } else if counts.iter().any(|&count| count == 3) && counts.iter().any(|&count| count == 2) {
         let mut indices = get_indices(&counts, 3);
-        sum = indices[0] as i64 * 3;
-        indices = get_indices(&counts, 2);
-        sum += indices[0] as i64 * 2;
-        (sum, TypeOfHands::FullHouse)
+        indices.extend(get_indices(&counts, 2));
+        (indices, TypeOfHands::FullHouse)
     } else if counts.iter().any(|&count| count == 3) {
-        let indices = get_indices(&counts, 3);
-        sum = indices[0] as i64 * 3;
-        (sum, TypeOfHands::ThreeOfAKind)
+        (get_indices(&counts, 3), TypeOfHands::ThreeOfAKind)
     } else if counts.iter().filter(|&&count| count == 2).count() == 2 {
-        let indices = get_indices(&counts, 2);
-        sum = indices[0] as i64 * 2;
-        (sum, TypeOfHands::TwoPair)
+        (get_indices(&counts, 2), TypeOfHands::TwoPair)
     } else if counts.iter().any(|&count| count == 2) {
-        let indices = get_indices(&counts, 2);
-        sum = indices[0] as i64 * 2;
-        (sum, TypeOfHands::OnePair)
+        (get_indices(&counts, 2), TypeOfHands::OnePair)
     } else {
-        // For HighCard, return the sum of card values
-        sum = cards_by_values.iter().map(|&c| c as i64).sum();
-        (sum, TypeOfHands::HighCard)
+        (get_indices(&counts, 1), TypeOfHands::HighCard)
     }
 }
 
@@ -111,7 +97,7 @@ fn get_hands(input: &str) -> Vec<Hand> {
 
 fn compare_by_type_and_value(lhs: &Hand, rhs: &Hand) -> Ordering {
     match lhs.type_of_hands.cmp(&rhs.type_of_hands) {
-        Ordering::Equal => match lhs.value_type_of_cards.cmp(&rhs.value_type_of_cards) {
+        Ordering::Equal => match lhs.pairs.cmp(&rhs.pairs) {
             Ordering::Equal => match lhs.cards.cmp(&rhs.cards) {
                 Ordering::Equal => panic!("eq"),
                 ordering => return ordering,
