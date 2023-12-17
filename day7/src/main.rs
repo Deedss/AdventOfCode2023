@@ -37,7 +37,6 @@ impl Hand {
             .chars()
             .map(|c| get_card_value(c))
             .collect::<Vec<u8>>();
-        cards_by_values.sort_by(|a, b| b.cmp(a));
         let (pairs, type_of_hands) = get_type_of_hands(&cards_by_values);
         Hand {
             cards: cards_by_values,
@@ -97,13 +96,18 @@ fn get_hands(input: &str) -> Vec<Hand> {
 
 fn compare_by_type_and_value(lhs: &Hand, rhs: &Hand) -> Ordering {
     match lhs.type_of_hands.cmp(&rhs.type_of_hands) {
-        Ordering::Equal => match lhs.pairs.cmp(&rhs.pairs) {
-            Ordering::Equal => match lhs.cards.cmp(&rhs.cards) {
-                Ordering::Equal => panic!("eq"),
-                ordering => return ordering,
-            },
-            ordering => return ordering,
-        },
+        Ordering::Equal => {
+            for n in 0..5 {
+                match (lhs.cards.get(n as usize), rhs.cards.get(n as usize)) {
+                    (Some(l_card), Some(r_card)) => match l_card.cmp(r_card) {
+                        Ordering::Equal => continue,
+                        ordering => return ordering,
+                    },
+                    _ => break, // Stop comparing if one hand has fewer than 5 cards
+                }
+            }
+            Ordering::Equal // All cards are equal
+        }
         ordering => ordering,
     }
 }
@@ -113,8 +117,8 @@ fn part_1(input: &str) -> i64 {
     let mut total: i64 = 0;
 
     hands.sort_by(|a, b| compare_by_type_and_value(a, b));
-    hands.iter().for_each(|hand| println!("{:?}", hand));
     for (i, hand) in hands.iter().enumerate() {
+        println!("hand: {:?} and rank:{}", hand, i + 1);
         total += hand.bid * (i + 1) as i64;
     }
 
