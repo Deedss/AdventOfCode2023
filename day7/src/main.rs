@@ -28,58 +28,41 @@ struct Hand {
     cards: Vec<u8>,
     bid: i64,
     type_of_hands: TypeOfHands,
-    pairs: Vec<u8>,
 }
 
 impl Hand {
     fn new(cards: &str, bid: i64) -> Self {
-        let mut cards_by_values = cards
+        let cards_by_values = cards
             .chars()
             .map(|c| get_card_value(c))
             .collect::<Vec<u8>>();
-        let (pairs, type_of_hands) = get_type_of_hands(&cards_by_values);
         Hand {
-            cards: cards_by_values,
+            cards: cards_by_values.clone(),
             bid,
-            type_of_hands,
-            pairs,
+            type_of_hands: get_type_of_hands(&cards_by_values),
         }
     }
 }
-
-fn get_indices(arr: &[i32; 15], count: u8) -> Vec<u8> {
-    let mut indices = Vec::new();
-    for (i, &val) in arr.iter().enumerate() {
-        if val == count as i32 {
-            indices.push(i as u8);
-        }
-    }
-    indices.sort_by(|a, &b| b.cmp(a));
-    indices
-}
-
-fn get_type_of_hands(cards_by_values: &Vec<u8>) -> (Vec<u8>, TypeOfHands) {
+fn get_type_of_hands(cards_by_values: &Vec<u8>) -> TypeOfHands {
     let mut counts = [0; 15];
     for c in cards_by_values.iter() {
         counts[*c as usize] += 1;
     }
 
     if counts.iter().any(|&count| count == 5) {
-        (get_indices(&counts, 5), TypeOfHands::FiveOfAKind)
+        TypeOfHands::FiveOfAKind
     } else if counts.iter().any(|&count| count == 4) {
-        (get_indices(&counts, 4), TypeOfHands::FourOfAKind)
+        TypeOfHands::FourOfAKind
     } else if counts.iter().any(|&count| count == 3) && counts.iter().any(|&count| count == 2) {
-        let mut indices = get_indices(&counts, 3);
-        indices.extend(get_indices(&counts, 2));
-        (indices, TypeOfHands::FullHouse)
+        TypeOfHands::FullHouse
     } else if counts.iter().any(|&count| count == 3) {
-        (get_indices(&counts, 3), TypeOfHands::ThreeOfAKind)
+        TypeOfHands::ThreeOfAKind
     } else if counts.iter().filter(|&&count| count == 2).count() == 2 {
-        (get_indices(&counts, 2), TypeOfHands::TwoPair)
+        TypeOfHands::TwoPair
     } else if counts.iter().any(|&count| count == 2) {
-        (get_indices(&counts, 2), TypeOfHands::OnePair)
+        TypeOfHands::OnePair
     } else {
-        (get_indices(&counts, 1), TypeOfHands::HighCard)
+        TypeOfHands::HighCard
     }
 }
 
