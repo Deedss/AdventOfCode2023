@@ -50,8 +50,7 @@ fn parse_card(input: &str) -> Card {
 }
 
 fn parse_cards(input: &str) -> Vec<Card> {
-    let mut cards: Vec<Card> = input.lines().map(|row| parse_card(row)).collect();
-    cards
+    input.lines().map(|row| parse_card(row)).collect()
 }
 
 fn part_1(input: &str) -> u32 {
