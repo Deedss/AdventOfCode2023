@@ -12,3 +12,8 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+**/*.txt
+**/*.input
+
+find  -type f -name "*.txt" -exec rename 's/\.txt$/.input/' {} \;

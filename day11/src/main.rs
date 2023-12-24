@@ -111,21 +111,21 @@ fn part_2(input: &str, times: i64) -> i64 {
 }
 
 fn main() {
-    let example_1 = part_1(include_str!("example.txt"), 1);
+    let example_1 = part_1(include_str!("example.input"), 1);
     println!("example 1 = {}", example_1);
     assert_eq!(example_1, 374);
 
-    let part_1 = part_1(include_str!("input.txt"), 1);
+    let part_1 = part_1(include_str!("input.input"), 1);
     println!("part_1 = {}", part_1);
 
-    let example_2 = part_2(include_str!("example.txt"), 9);
+    let example_2 = part_2(include_str!("example.input"), 9);
     println!("example 2 = {}", example_2);
     assert_eq!(example_2, 1030);
 
-    let example_3 = part_2(include_str!("example.txt"), 99);
+    let example_3 = part_2(include_str!("example.input"), 99);
     println!("example 3 = {}", example_3);
     assert_eq!(example_3, 8410);
 
-    let part_2 = part_2(include_str!("input.txt"), 999999);
+    let part_2 = part_2(include_str!("input.input"), 999999);
     println!("part_2 = {}", part_2);
 }

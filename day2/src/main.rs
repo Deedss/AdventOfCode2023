@@ -131,15 +131,15 @@ fn part_2(input: &str) -> u32 {
 }
 
 fn main() {
-    let sample_part1 = part_1(include_str!("sample.txt").trim());
+    let sample_part1 = part_1(include_str!("sample.input").trim());
     println!("{}", sample_part1);
 
-    let part_1 = part_1(include_str!("input.txt").trim());
+    let part_1 = part_1(include_str!("input.input").trim());
     println!("{}", part_1);
 
-    let s_part2 = part_2(include_str!("sample.txt").trim());
+    let s_part2 = part_2(include_str!("sample.input").trim());
     println!("{}", s_part2);
 
-    let part2 = part_2(include_str!("input.txt").trim());
+    let part2 = part_2(include_str!("input.input").trim());
     println!("{}", part2);
 }

@@ -183,15 +183,15 @@ fn part_2(input: &str) -> u32 {
 }
 
 fn main() {
-    let example1 = part_1(include_str!("sample.txt"));
+    let example1 = part_1(include_str!("sample.input"));
     println!("{}", example1);
     //
-    let part1 = part_1(include_str!("input.txt"));
+    let part1 = part_1(include_str!("input.input"));
     println!("{}", part1);
     //
-    let example2 = part_2(include_str!("sample.txt"));
+    let example2 = part_2(include_str!("sample.input"));
     println!("{}", example2);
     //
-    let part2 = part_2(include_str!("input.txt"));
+    let part2 = part_2(include_str!("input.input"));
     println!("{}", part2);
 }

@@ -1,5 +1,5 @@
 fn main() {
-    let contents = include_str!("../input.txt").trim();
+    let contents = include_str!("../input.input").trim();
 
     let part2: u32 = contents.lines().map(process_line).sum();
 

@@ -73,13 +73,13 @@ fn part_2(input: &str) -> u32 {
     counts.iter().sum()
 }
 fn main() {
-    let example_1 = part_1(include_str!("example.txt"));
+    let example_1 = part_1(include_str!("example.input"));
     println!("Example part 1 : {}", example_1);
-    let part_1 = part_1(include_str!("input.txt"));
+    let part_1 = part_1(include_str!("input.input"));
     println!("Input part 1 : {}", part_1);
 
-    let example_2 = part_2(include_str!("example.txt"));
+    let example_2 = part_2(include_str!("example.input"));
     println!("Example part 2 : {}", example_2);
-    let part_2 = part_2(include_str!("input.txt"));
+    let part_2 = part_2(include_str!("input.input"));
     println!("Input part 2 : {}", part_2);
 }

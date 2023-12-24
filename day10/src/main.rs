@@ -213,18 +213,18 @@ fn part_2(input: &str) -> i64 {
 }
 
 fn main() {
-    let example1 = part_1(include_str!("part_1/example.txt"));
+    let example1 = part_1(include_str!("part_1/example.input"));
     println!("Example 1: {}", example1);
 
-    let example2 = part_1(include_str!("part_1/example2.txt"));
+    let example2 = part_1(include_str!("part_1/example2.input"));
     println!("Example 2: {}", example2);
 
-    let part_1 = part_1(include_str!("part_1/input.txt"));
+    let part_1 = part_1(include_str!("part_1/input.input"));
     println!("Part 1: {}", part_1);
 
-    let part_2_example1 = part_2(include_str!("part_2/example1.txt"));
+    let part_2_example1 = part_2(include_str!("part_2/example1.input"));
     println!("Example 1 part 2: {}", part_2_example1);
 
-    // let part_2_example2 = part_2(include_str!("part_2/example2.txt"));
+    // let part_2_example2 = part_2(include_str!("part_2/example2.input"));
     // println!("Example 2 part 2: {}", part_2_example2);
 }
