@@ -1,4 +1,4 @@
-use std::vec;
+use std::{env::Vars, vec};
 
 #[derive(Debug, Clone, Copy)]
 struct Pos {
@@ -14,6 +14,12 @@ struct Pair {
 
 fn parse(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|l| l.chars().collect()).collect()
+}
+
+fn some_function(galaxies: &Vec<Vec<char>>, times: i64) -> Vec<Vars> {
+    let mut some: Vec<Vars> = vec![];
+
+    some
 }
 
 fn expand(galaxies: &Vec<Vec<char>>, times: i64) -> Vec<Vec<char>> {

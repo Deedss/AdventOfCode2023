@@ -42,9 +42,11 @@ fn part_1(input: &str) -> i64 {
     let times = get_values(input, 0);
     let distances = get_values(input, 1);
     let mut solutions: Vec<i64> = Vec::new();
+    let name;
 
     for i in 0..times.len() {
         solutions.insert(i, get_possible_solutions(times[i], distances[i]))
+        
     }
 
     solutions.iter().fold(1, |acc, &x| acc * x)

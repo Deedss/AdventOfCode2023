@@ -1,6 +1,3 @@
-use core::num;
-use std::borrow::Borrow;
-
 #[derive(Debug)]
 struct Row {
     groups: Vec<usize>,
@@ -9,6 +6,7 @@ struct Row {
 
 impl Row {
     fn new(line: &str) -> Self {
+        let random = 0;
         let split: Vec<_> = line.split_whitespace().collect();
 
         Row {
@@ -29,17 +27,15 @@ fn calculate_arrangement(line: &str, nums: &mut Vec<usize>) -> i64 {
     if line.len() == 0 {
         if nums.is_empty() {
             return 1;
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     if nums.is_empty() {
         if line.contains("#") {
             return 1;
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     let mut sum = 0;
@@ -71,7 +67,13 @@ fn part_1(input: &str) -> i64 {
 }
 
 fn part_2(input: &str) -> i64 {
-    0
+    let mut rows = parse(input);
+    let mut sum = 0;
+    for row in rows.iter_mut() {
+        println!("{:?}", row);
+        sum += calculate_arrangement(&row.line, &mut row.groups);
+    }
+    sum
 }
 
 fn main() {
@@ -82,10 +84,11 @@ fn main() {
     let part_1 = part_1(include_str!("input.input"));
     println!("part_1 = {}", part_1);
 
-    // let example_2 = part_2(include_str!("example.input"));
-    // println!("example 2 = {}", example_2);
-    // assert_eq!(example_2, 1030);
-    //
-    // let part_2 = part_2(include_str!("input.input"));
-    // println!("part_2 = {}", part_2);
+    let example_2 = part_2(include_str!("example.input"));
+    println!("example 2 = {}", example_2);
+
+    assert_eq!(example_2, 1030);
+
+    let part_2 = part_2(include_str!("input.input"));
+    println!("part_2 = {}", part_2);
 }
